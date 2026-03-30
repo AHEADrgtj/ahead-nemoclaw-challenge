@@ -1,0 +1,83 @@
+# AHEAD SecOps Runtime — Submission Stack
+#
+# Uses a pre-built Elixir release (no compilation needed).
+#
+# Usage:
+#   cp .env.example .env    # optionally add NVIDIA_API_KEY
+#   docker compose up
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: secops_dev
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  nemoclaw-bridge:
+    build:
+      context: ./nemoclaw_agent
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
+      - NVIDIA_MODEL=${NVIDIA_MODEL:-meta/llama-3.1-8b-instruct}
+      - NVIDIA_API_BASE=${NVIDIA_API_BASE:-https://integrate.api.nvidia.com/v1}
+      - RAPIDS_CPU_FALLBACK=${RAPIDS_CPU_FALLBACK:-true}
+      - RAPIDS_GENERATE_MOCK=${RAPIDS_GENERATE_MOCK:-true}
+      - ELIXIR_LOG_URL=http://secops:4500/api/bridge-logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  secops:
+    build:
+      context: .
+      dockerfile: Dockerfile.secops
+    ports:
+      - "127.0.0.1:4500:4500"
+      - "127.0.0.1:4242:4242"  # CrowdStrike
+      - "127.0.0.1:4243:4243"  # Palo Alto
+      - "127.0.0.1:4244:4244"  # ServiceNow
+    environment:
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-generated_at_runtime_see_below}
+      - BIND_IP=0.0.0.0
+      - PORT=4500
+      - PHX_HOST=localhost
+      - DB_HOSTNAME=postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=secops_dev
+      - BRIDGE_ADAPTER=${BRIDGE_ADAPTER:-http}
+      - NEMOCLAW_BRIDGE_URL=http://nemoclaw-bridge:8000
+      - OPENCLAW_SKILL_RUNNER_URL=${OPENCLAW_SKILL_RUNNER_URL:-http://nemoclaw-bridge:8000}
+      - AHEAD_SECOPS_URL=http://localhost:4500
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nemoclaw-bridge:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+        cd /app
+        if [ -z \"$$SECRET_KEY_BASE\" ] || [ \"$$SECRET_KEY_BASE\" = 'generated_at_runtime_see_below' ]; then
+          export SECRET_KEY_BASE=$$(head -c 64 /dev/urandom | base64)
+        fi
+        bin/secops eval 'Secops.Release.migrate()' 2>&1
+        exec bin/secops start
+      "
+
+volumes:
+  pgdata:

@@ -1,0 +1,30 @@
+# Runtime-only Dockerfile for the AHEAD SecOps Runtime.
+# Uses a pre-built Elixir release — no Elixir toolchain needed.
+#
+# The release tarball is built separately via:
+#   ./dev_scripts/build_submission.sh
+
+FROM debian:trixie-slim
+
+RUN apt-get update && apt-get install -y \
+    libstdc++6 openssl libncurses6 locales curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set locale (required by BEAM/Erlang)
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV LANG=en_US.UTF-8
+
+WORKDIR /app
+
+# Unpack the pre-built release
+COPY release/secops-release.tar.gz /tmp/secops-release.tar.gz
+RUN tar -xzf /tmp/secops-release.tar.gz --strip-components=1 -C /app && rm /tmp/secops-release.tar.gz
+
+# Copy mock data (used by bridge adapter in mock mode)
+COPY mock mock
+
+EXPOSE 4500 4242 4243 4244
+
+ENV PORT=4500
+
+CMD ["bin/secops", "start"]

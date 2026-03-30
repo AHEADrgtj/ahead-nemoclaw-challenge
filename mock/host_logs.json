@@ -1,0 +1,153 @@
+{
+  "host": "WKSTN-042",
+  "collection_time": "2026-03-20T14:30:00Z",
+  "logs": [
+    {
+      "timestamp": "2026-03-20T14:13:22Z",
+      "source": "Security",
+      "event_id": 4688,
+      "description": "A new process has been created",
+      "details": {
+        "process": "WINWORD.EXE",
+        "pid": 4812,
+        "parent": "explorer.exe",
+        "user": "ACMECORP\\jsmith",
+        "command_line": "\"C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE\" /n \"C:\\Users\\jsmith\\Downloads\\Q4-Financial-Review-2026.docm\""
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:13:44Z",
+      "source": "Security",
+      "event_id": 4688,
+      "description": "A new process has been created",
+      "details": {
+        "process": "powershell.exe",
+        "pid": 7284,
+        "parent": "WINWORD.EXE",
+        "parent_pid": 4812,
+        "user": "ACMECORP\\jsmith",
+        "command_line": "powershell.exe -NoP -NonI -W Hidden -EncodedCommand SQBFAFgA..."
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:13:45Z",
+      "source": "Sysmon",
+      "event_id": 3,
+      "description": "Network connection detected",
+      "details": {
+        "process": "powershell.exe",
+        "pid": 7284,
+        "protocol": "tcp",
+        "source_ip": "10.128.4.42",
+        "source_port": 49832,
+        "destination_ip": "185.220.101.42",
+        "destination_port": 443,
+        "initiated": true
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:13:46Z",
+      "source": "Sysmon",
+      "event_id": 22,
+      "description": "DNS query",
+      "details": {
+        "process": "powershell.exe",
+        "pid": 7284,
+        "query_name": "dns.google",
+        "query_type": "AAAA",
+        "query_status": "SUCCESS",
+        "note": "DNS-over-HTTPS resolution bypassing corporate DNS"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:14:02Z",
+      "source": "Sysmon",
+      "event_id": 11,
+      "description": "File created",
+      "details": {
+        "process": "powershell.exe",
+        "pid": 7284,
+        "target_filename": "C:\\ProgramData\\svchost.exe",
+        "sha256": "a3f2d4e6b8c1d3e5f7a9b2c4d6e8f0a1b3c5d7e9f1a2b4c6d8e0f2a4b6c891"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:14:05Z",
+      "source": "Security",
+      "event_id": 4698,
+      "description": "A scheduled task was created",
+      "details": {
+        "task_name": "\\Microsoft\\Windows\\Maintenance\\WinSvc",
+        "task_content": {
+          "trigger": "AtLogon",
+          "action": "C:\\ProgramData\\svchost.exe -k netsvcs",
+          "principal": "SYSTEM"
+        },
+        "creator": "ACMECORP\\jsmith"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:15:30Z",
+      "source": "Sysmon",
+      "event_id": 1,
+      "description": "Process Create",
+      "details": {
+        "process": "wmic.exe",
+        "pid": 8412,
+        "parent": "powershell.exe",
+        "parent_pid": 7284,
+        "command_line": "wmic /node:WKSTN-043 process call create \"cmd /c echo test > C:\\Users\\Public\\test.txt\"",
+        "user": "ACMECORP\\jsmith"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:15:31Z",
+      "source": "Sysmon",
+      "event_id": 3,
+      "description": "Network connection detected",
+      "details": {
+        "process": "wmic.exe",
+        "pid": 8412,
+        "protocol": "tcp",
+        "source_ip": "10.128.4.42",
+        "source_port": 49847,
+        "destination_ip": "10.128.4.43",
+        "destination_port": 135,
+        "initiated": true,
+        "note": "WMI lateral movement attempt"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:16:00Z",
+      "source": "Security",
+      "event_id": 4624,
+      "description": "An account was successfully logged on",
+      "details": {
+        "logon_type": 3,
+        "target_user": "jsmith",
+        "target_domain": "ACMECORP",
+        "source_network_address": "10.128.4.42",
+        "workstation_name": "WKSTN-042",
+        "note": "Network logon from compromised host to WKSTN-043"
+      }
+    },
+    {
+      "timestamp": "2026-03-20T14:18:00Z",
+      "source": "Sysmon",
+      "event_id": 3,
+      "description": "Network connection detected",
+      "details": {
+        "process": "svchost.exe",
+        "pid": 9102,
+        "process_path": "C:\\ProgramData\\svchost.exe",
+        "protocol": "tcp",
+        "source_ip": "10.128.4.42",
+        "source_port": 49901,
+        "destination_ip": "185.220.101.42",
+        "destination_port": 443,
+        "initiated": true,
+        "note": "Persisted malware beacon — different PID than initial PowerShell"
+      }
+    }
+  ]
+}

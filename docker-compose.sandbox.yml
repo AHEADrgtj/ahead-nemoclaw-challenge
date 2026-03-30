@@ -1,0 +1,18 @@
+# Override for running with NemoClaw sandbox on the host.
+# The bridge/skill runner runs inside the sandbox, not as a Docker container.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.sandbox.yml up --build -d
+#
+# Prerequisites:
+#   - NemoClaw sandbox running with skill runner on port 8001
+#   - Port forwarded: openshell forward start 8001 ahead-secops --background
+
+services:
+  secops:
+    environment:
+      - BRIDGE_ADAPTER=openclaw
+      - OPENCLAW_SKILL_RUNNER_URL=http://host.docker.internal:8001
+    depends_on:
+      postgres:
+        condition: service_healthy
