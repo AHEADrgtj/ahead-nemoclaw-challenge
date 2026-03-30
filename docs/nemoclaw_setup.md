@@ -1,5 +1,3 @@
-> Note: These setup instructions contain references to scripts that are not available publicly.
-
 # NemoClaw Setup Guide (macOS)
 
 Step-by-step guide to getting the NemoClaw sandbox running on macOS with
@@ -51,32 +49,6 @@ The wizard will:
 5. **OpenClaw** — sets up the agent inside the sandbox
 6. **Policy presets** — when asked "Apply suggested presets (pypi, npm)?", say **Y**
 
-### Common issues during onboard
-
-**Port 18789 in use:**
-```bash
-sudo lsof -i :18789
-sudo kill <pid>     # usually a stale SSH tunnel from a previous run
-```
-
-**Port 8080 in use:**
-```bash
-# Stop any existing OpenShell gateway
-docker stop $(docker ps -q --filter "name=openshell") 2>/dev/null
-```
-
-**Permission denied on `~/.nemoclaw/` or `~/.config/openshell/`:**
-```bash
-sudo chown -R $(whoami) ~/.nemoclaw ~/.config/openshell
-```
-
-**"Sandbox not found" error during step 6:**
-The sandbox registration got out of sync. Destroy and restart:
-```bash
-nemoclaw ahead-secops destroy
-nemoclaw onboard
-```
-
 ## 3. Verify the sandbox
 
 ```bash
@@ -88,10 +60,17 @@ Should show `Phase: Ready`.
 ## 4. Upload the bridge code to the sandbox
 
 The sandbox is a clean Linux container — it doesn't have your project code
-or Python dependencies. You need to upload them.
+or Python dependencies. The deploy script vendors deps for your sandbox
+platform and uploads everything.
 
 ```bash
-./dev_scripts/upload_to_sandbox.sh --vendor
+./dev_scripts/deploy_to_sandbox.sh
+```
+
+Update inference config:
+
+```bash
+openshell inference update --model meta/llama-3.1-8b-instruct --no-verify
 ```
 
 ## 5. Start the bridge inside the sandbox

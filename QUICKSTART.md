@@ -56,15 +56,26 @@ docker compose up
 
 ## Option 3: NemoClaw Sandbox (full agent isolation)
 
-> Note: These setup instructions are not publicly executable at this time.
-
 Skills run inside the NemoClaw sandbox with egress controls, credential
 isolation via the privacy router, and real-time approval via `openshell term`.
 
 ### Prerequisites
 
-- NemoClaw CLI installed
-- Sandbox created and skills uploaded (see docs/nemoclaw-setup.md)
+- Docker Desktop running
+- Node.js 22+ (`brew install node`)
+- NemoClaw installed and onboarded — see [docs/nemoclaw_setup.md](docs/nemoclaw_setup.md)
+
+### Setup
+
+Once NemoClaw is installed and the `ahead-secops` sandbox is onboarded:
+
+```bash
+./dev_scripts/deploy_to_sandbox.sh
+```
+
+This vendors Python dependencies for your sandbox platform and uploads
+the skills and dependencies. See [docs/nemoclaw_setup.md](docs/nemoclaw_setup.md)
+for the full walkthrough.
 
 ### Running
 
@@ -86,8 +97,9 @@ openshell term
 ```
 
 The sandbox overlay routes the Elixir container to the host's NemoClaw
-skill runner instead of the Docker bridge container. The codebase in the sandbox never needs
-API keys — credentials are injected by the host runtime via the privacy router.
+skill runner instead of the Docker bridge container. The codebase in the
+sandbox never needs API keys — credentials are injected by the host
+runtime via the privacy router.
 
 ---
 

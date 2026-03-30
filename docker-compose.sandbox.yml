@@ -13,6 +13,8 @@ services:
     environment:
       - BRIDGE_ADAPTER=openclaw
       - OPENCLAW_SKILL_RUNNER_URL=http://host.docker.internal:8001
+    volumes:
+      - ./nemoclaw_agent:/app/nemoclaw_agent:ro
     depends_on:
       postgres:
         condition: service_healthy
